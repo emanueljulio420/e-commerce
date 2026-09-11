@@ -1,18 +1,21 @@
 package com.ecommerce.catalog.dto;
 
+import java.math.BigDecimal;
 import jakarta.validation.constraints.*;
 
-public class ProductDTO {
-    
+public class ProductRequest {
+
     @NotBlank(message = "El nombre no puede estar vacío")
     private String name;
-    
+
     @NotBlank(message = "La descripción no puede estar vacía")
     private String description;
-    
+
+    @NotNull(message = "El precio es obligatorio")
     @Positive(message = "El precio debe ser positivo")
-    private Double price;
-    
+    private BigDecimal price;
+
+    @NotNull(message = "El stock es obligatorio")
     @PositiveOrZero(message = "El stock no puede ser negativo")
     private Integer stock;
     
@@ -33,11 +36,11 @@ public class ProductDTO {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
