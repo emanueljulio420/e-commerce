@@ -37,7 +37,6 @@ class OrderServiceTest {
         itemRequest.setQuantity(2);
 
         OrderRequest request = new OrderRequest();
-        request.setUserId(10L);
         request.setItems(List.of(itemRequest));
 
         ProductInfo productInfo = new ProductInfo();
@@ -56,7 +55,7 @@ class OrderServiceTest {
         });
 
         // Act
-        OrderResponse response = orderService.createOrder(request);
+        OrderResponse response = orderService.createOrder(request, 10L);
 
         // Assert
         assertThat(response.getId()).isEqualTo(100L);
@@ -77,7 +76,6 @@ class OrderServiceTest {
         itemRequest.setQuantity(1);
 
         OrderRequest request = new OrderRequest();
-        request.setUserId(10L);
         request.setItems(List.of(itemRequest));
 
         when(catalogServiceClient.getProduct(999L))
@@ -86,7 +84,7 @@ class OrderServiceTest {
         // Act & Assert
         org.junit.jupiter.api.Assertions.assertThrows(
                 ProductNotFoundInCatalogException.class,
-                () -> orderService.createOrder(request));
+                () -> orderService.createOrder(request, 10L));
 
         // Confirmamos que, como el producto no existía, NUNCA se llegó a intentar
         // guardar el pedido

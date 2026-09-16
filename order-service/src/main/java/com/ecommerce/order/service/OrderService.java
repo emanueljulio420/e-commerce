@@ -24,9 +24,9 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse createOrder(OrderRequest request) {
+    public OrderResponse createOrder(OrderRequest request, Long userId) {
         Order order = new Order();
-        order.setUserId(request.getUserId());
+        order.setUserId(userId);
 
         BigDecimal total = BigDecimal.ZERO;
 
@@ -57,35 +57,35 @@ public class OrderService {
         return toResponse(order);
     }
 
-    public List<OrderResponse> getAllOrders() {
-        return orderRepository.findAll().stream()
-            .map(this::toResponse)
-            .toList();
+    public List<OrderResponse> getOrders(Long userId, boolean isAdmin) {
+        List<Order> orders = isAdmin
+                ? orderRepository.findAll()
+                : orderRepository.findByUserId(userId);
+
+        return orders.stream().map(this::toResponse).toList();
     }
 
     private Order findOrderOrThrow(Long id) {
         return orderRepository.findById(id)
-            .orElseThrow(() -> new OrderNotFoundException(id));
+                .orElseThrow(() -> new OrderNotFoundException(id));
     }
 
     private OrderResponse toResponse(Order order) {
         List<OrderItemResponse> itemResponses = order.getItems().stream()
-            .map(item -> new OrderItemResponse(
-                item.getId(),
-                item.getProductId(),
-                item.getProductName(),
-                item.getUnitPrice(),
-                item.getQuantity()
-            ))
-            .toList();
+                .map(item -> new OrderItemResponse(
+                        item.getId(),
+                        item.getProductId(),
+                        item.getProductName(),
+                        item.getUnitPrice(),
+                        item.getQuantity()))
+                .toList();
 
         return new OrderResponse(
-            order.getId(),
-            order.getUserId(),
-            order.getStatus(),
-            order.getTotalAmount(),
-            order.getCreatedAt(),
-            itemResponses
-        );
+                order.getId(),
+                order.getUserId(),
+                order.getStatus(),
+                order.getTotalAmount(),
+                order.getCreatedAt(),
+                itemResponses);
     }
 }
