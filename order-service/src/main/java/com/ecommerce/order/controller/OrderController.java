@@ -32,7 +32,9 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id) {
-        return ResponseEntity.ok(orderService.getOrderById(id));
+        Long userId = getCurrentUserId();
+        boolean isAdmin = isCurrentUserAdmin();
+        return ResponseEntity.ok(orderService.getOrderById(id, userId, isAdmin));
     }
 
     @PostMapping
@@ -50,6 +52,6 @@ public class OrderController {
     private boolean isCurrentUserAdmin() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getAuthorities().stream()
-            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 }

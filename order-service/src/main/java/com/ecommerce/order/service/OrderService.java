@@ -11,6 +11,7 @@ import com.ecommerce.order.exception.OrderNotFoundException;
 import com.ecommerce.order.model.Order;
 import com.ecommerce.order.model.OrderItem;
 import com.ecommerce.order.repository.OrderRepository;
+import org.springframework.security.access.AccessDeniedException;
 
 @Service
 public class OrderService {
@@ -52,8 +53,13 @@ public class OrderService {
         return toResponse(saved);
     }
 
-    public OrderResponse getOrderById(Long id) {
+    public OrderResponse getOrderById(Long id, Long userId, boolean isAdmin) {
         Order order = findOrderOrThrow(id);
+
+        if (!isAdmin && !order.getUserId().equals(userId)) {
+            throw new AccessDeniedException("No tienes permiso para ver este pedido");
+        }
+
         return toResponse(order);
     }
 

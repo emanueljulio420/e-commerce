@@ -28,13 +28,15 @@ class ProductControllerTest {
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders
-            .webAppContextSetup(webApplicationContext)
-            .apply(SecurityMockMvcConfigurers.springSecurity())
-            .build();
+                .webAppContextSetup(webApplicationContext)
+                .apply(SecurityMockMvcConfigurers.springSecurity())
+                .build();
     }
+
     @Test
     @WithMockUser
-    // @WithMockUser(username = "admin", roles = {"ADMIN"}) para probar con un rol específico
+    // @WithMockUser(username = "admin", roles = {"ADMIN"}) para probar con un rol
+    // específico
     void createProduct_deberiaDevolver400_cuandoNombreYPrecioFaltan() throws Exception {
         String jsonInvalido = """
                 {
@@ -54,7 +56,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = { "ADMIN" })
     void createProduct_deberiaDevolver201_cuandoElProductoEsValido() throws Exception {
         String jsonValido = """
                 {
